@@ -2,9 +2,11 @@ import React, { useState, useCallback } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { PDFViewerProps, LoadSuccessParams } from '../types/pdf';
 import PDFControls from './PDFControls';
+import workerSrc from 'pdfjs-dist/build/pdf.worker.min?url';
+
 
 // Configure PDF.js worker
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
+pdfjs.GlobalWorkerOptions.workerSrc = workerSrc;
 
 const PDFViewer: React.FC<PDFViewerProps> = ({
   file,
