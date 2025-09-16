@@ -33,8 +33,8 @@ const App: React.FC = () => {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>PDF Viewer</h1>
-        <p>Upload and view PDF documents</p>
+        <h1>PDF Annotator</h1>
+        <p>Upload and annotatate PDF document</p>
       </header>
 
       <main className="app-main">
@@ -48,7 +48,6 @@ const App: React.FC = () => {
             <div className="file-info">
               <div className="file-details">
                 <strong>File:</strong> {selectedFile.name} 
-                ({(selectedFile.size / 1024 / 1024).toFixed(2)} MB)
                 {pdfInfo && (
                   <span style={{ marginLeft: '20px' }}>
                     <strong>Pages:</strong> {pdfInfo.numPages}

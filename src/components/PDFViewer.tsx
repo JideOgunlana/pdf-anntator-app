@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { PDFViewerProps, LoadSuccessParams } from '../types/pdf';
 import PDFControls from './PDFControls';
+import PDFTextTool from './PDFTextTool';
 import workerSrc from 'pdfjs-dist/build/pdf.worker.min?url';
 
 
@@ -70,6 +71,7 @@ const PDFViewer: React.FC<PDFViewerProps> = ({
       borderRadius: '8px',
       overflow: 'hidden'
     }}>
+      <PDFTextTool />
       {numPages > 0 && (
         <PDFControls
           numPages={numPages}
