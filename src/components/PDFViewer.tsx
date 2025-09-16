@@ -1,4 +1,4 @@
-import React, { useState, useCallback, act } from 'react';
+import React, { useState, useCallback} from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { PDFViewerProps, LoadSuccessParams } from '../types/pdf';
 import PDFControls from './PDFControls';
