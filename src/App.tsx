@@ -54,12 +54,14 @@ const App: React.FC = () => {
                   </span>
                 )}
               </div>
-              <button 
-                onClick={clearFile}
-                className="clear-button"
-              >
-                Upload Different File
-              </button>
+              <div className="file-actions">
+                <button 
+                  onClick={clearFile}
+                  className="clear-button"
+                >
+                  Upload Different File
+                </button>
+              </div>
             </div>
             
             <PDFViewer

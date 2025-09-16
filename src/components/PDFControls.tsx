@@ -1,12 +1,17 @@
 import React from 'react';
 import type { PDFControlsProps } from '../types/pdf';
 
-const PDFControls: React.FC<PDFControlsProps> = ({
+type ExtendedPDFControlsProps = PDFControlsProps & {
+  onAddTextBox?: () => void;
+};
+
+const PDFControls: React.FC<ExtendedPDFControlsProps> = ({
   numPages,
   pageNumber,
   onPageChange,
   scale,
   onScaleChange,
+  onAddTextBox,
   className = ''
 }) => {
   const handlePrevPage = () => {
@@ -28,14 +33,6 @@ const PDFControls: React.FC<PDFControlsProps> = ({
     }
   };
 
-  const handleZoomIn = () => {
-    onScaleChange(Math.min(scale + 0.1, 3.0));
-  };
-
-  const handleZoomOut = () => {
-    onScaleChange(Math.max(scale - 0.1, 0.5));
-  };
-
   const handleScaleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     onScaleChange(parseFloat(e.target.value));
   };
@@ -49,21 +46,10 @@ const PDFControls: React.FC<PDFControlsProps> = ({
       borderBottom: '1px solid #ccc',
       backgroundColor: '#f5f5f5'
     }}>
+
+      {/* Page navigation */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <button 
-          onClick={handlePrevPage} 
-          disabled={pageNumber <= 1}
-          style={{
-            padding: '8px 12px',
-            border: '1px solid #ccc',
-            backgroundColor: 'white',
-            cursor: pageNumber <= 1 ? 'not-allowed' : 'pointer',
-            borderRadius: '4px'
-          }}
-        >
-          ←
-        </button>
-        
+        <button onClick={handlePrevPage} disabled={pageNumber <= 1}>←</button>
         <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
           <input
             type="number"
@@ -71,57 +57,15 @@ const PDFControls: React.FC<PDFControlsProps> = ({
             onChange={handlePageInputChange}
             min={1}
             max={numPages}
-            style={{
-              width: '60px',
-              padding: '4px',
-              textAlign: 'center',
-              border: '1px solid #ccc',
-              borderRadius: '4px'
-            }}
           />
           <span>of {numPages}</span>
         </div>
-
-        <button 
-          onClick={handleNextPage} 
-          disabled={pageNumber >= numPages}
-          style={{
-            padding: '8px 12px',
-            border: '1px solid #ccc',
-            backgroundColor: 'white',
-            cursor: pageNumber >= numPages ? 'not-allowed' : 'pointer',
-            borderRadius: '4px'
-          }}
-        >
-          →
-        </button>
+        <button onClick={handleNextPage} disabled={pageNumber >= numPages}>→</button>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <button 
-          onClick={handleZoomOut}
-          style={{
-            padding: '8px 12px',
-            border: '1px solid #ccc',
-            backgroundColor: 'white',
-            cursor: 'pointer',
-            borderRadius: '4px'
-          }}
-        >
-          -
-        </button>
-        
-        <select 
-          value={scale} 
-          onChange={handleScaleChange}
-          style={{
-            padding: '4px 8px',
-            border: '1px solid #ccc',
-            borderRadius: '4px'
-          }}
-        >
-          <option value={0.5}>50%</option>
-          <option value={0.75}>75%</option>
+      {/* Zoom + Text Tool */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}> 
+        <select value={scale} onChange={handleScaleChange}>
           <option value={1.0}>100%</option>
           <option value={1.25}>125%</option>
           <option value={1.5}>150%</option>
@@ -129,16 +73,16 @@ const PDFControls: React.FC<PDFControlsProps> = ({
         </select>
 
         <button 
-          onClick={handleZoomIn}
+          onClick={onAddTextBox} 
           style={{
-            padding: '8px 12px',
-            border: '1px solid #ccc',
-            backgroundColor: 'white',
-            cursor: 'pointer',
-            borderRadius: '4px'
+            padding: '6px 10px',
+            border: '1px solid #333',
+            borderRadius: '4px',
+            backgroundColor: '#333',
+            cursor: 'pointer'
           }}
         >
-          +
+          Add Text
         </button>
       </div>
     </div>

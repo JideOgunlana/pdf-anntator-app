@@ -18,6 +18,7 @@ export interface PDFControlsProps {
   onPageChange: (page: number) => void;
   scale: number;
   onScaleChange: (scale: number) => void;
+  onAddTextBox?: () => void;
   className?: string;
 }
 

@@ -2,12 +2,23 @@ import React, { useState, useCallback } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { PDFViewerProps, LoadSuccessParams } from '../types/pdf';
 import PDFControls from './PDFControls';
-import PDFTextTool from './PDFTextTool';
 import workerSrc from 'pdfjs-dist/build/pdf.worker.min?url';
+import { Rnd, RndResizeCallback, RndDragCallback } from "react-rnd";
+
 
 
 // Configure PDF.js worker
 pdfjs.GlobalWorkerOptions.workerSrc = workerSrc;
+
+type TextBox = {
+  id: number;
+  text: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
+
 
 const PDFViewer: React.FC<PDFViewerProps> = ({
   file,
@@ -48,6 +59,43 @@ const PDFViewer: React.FC<PDFViewerProps> = ({
     setScale(newScale);
   }, []);
 
+    const [textBoxes, setTextBoxes] = useState<TextBox[]>([]);
+  
+    const addTextBox = () => {
+      setTextBoxes((prev) => [
+        ...prev,
+        {
+          id: Date.now(),
+          text: "Edit text",
+          x: 50,
+          y: 50,
+          width: 150,
+          height: 40,
+        },
+      ]);
+    };
+  
+    const updateTextBox = (id: number, updates: Partial<TextBox>) => {
+      setTextBoxes((prev) =>
+        prev.map((box) => (box.id === id ? { ...box, ...updates } : box))
+      );
+    };
+  
+    const handleDragStop: (id: number) => RndDragCallback =
+      (id) => (_e, d) => {
+        updateTextBox(id, { x: d.x, y: d.y });
+      };
+  
+    const handleResizeStop: (id: number) => RndResizeCallback =
+      (id) => (_e, _dir, ref, _delta, pos) => {
+        updateTextBox(id, {
+          width: parseInt(ref.style.width),
+          height: parseInt(ref.style.height),
+          x: pos.x,
+          y: pos.y,
+        });
+      };
+
   if (!file) {
     return (
       <div className={`pdf-viewer ${className}`} style={{
@@ -69,9 +117,9 @@ const PDFViewer: React.FC<PDFViewerProps> = ({
     <div className={`pdf-viewer ${className}`} style={{
       border: '1px solid #ccc',
       borderRadius: '8px',
-      overflow: 'hidden'
+      overflow: 'hidden',
+      position: 'relative'
     }}>
-      <PDFTextTool />
       {numPages > 0 && (
         <PDFControls
           numPages={numPages}
@@ -79,6 +127,7 @@ const PDFViewer: React.FC<PDFViewerProps> = ({
           onPageChange={handlePageChange}
           scale={scale}
           onScaleChange={handleScaleChange}
+          onAddTextBox={addTextBox}
         />
       )}
       
@@ -135,21 +184,41 @@ const PDFViewer: React.FC<PDFViewerProps> = ({
               scale={scale}
               renderTextLayer={false}
               renderAnnotationLayer={false}
-            //   style={{
-            //     boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-            //     margin: '20px'
-            //   }}
             />
           )}
+          
+          {textBoxes.map((box) => (
+            <Rnd
+              key={box.id}
+              size={{ width: box.width, height: box.height }}
+              position={{ x: box.x, y: box.y }}
+              onDragStop={handleDragStop(box.id)}
+              onResizeStop={handleResizeStop(box.id)}
+              bounds="parent"
+              style={{
+                border: "1px solid #6666ff",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: "2px",
+                backgroundColor: "transparent",
+                position: "absolute",
+                zIndex: 1,
+              }}
+            >
+              <input
+                type="text"
+                value={box.text}
+                onChange={(e) =>
+                  updateTextBox(box.id, { text: e.target.value })
+                }
+              />
+            </Rnd>
+          ))}
         </Document>
-      </div>
 
-      <style >{`
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-      `}</style>
+        
+      </div>
     </div>
   );
 };
