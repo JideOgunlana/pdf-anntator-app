@@ -1,9 +1,10 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, act } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { PDFViewerProps, LoadSuccessParams } from '../types/pdf';
 import PDFControls from './PDFControls';
 import workerSrc from 'pdfjs-dist/build/pdf.worker.min?url';
 import { Rnd, RndResizeCallback, RndDragCallback } from "react-rnd";
+import './pdfViewer.css';
 
 
 
@@ -17,6 +18,7 @@ type TextBox = {
   y: number;
   width: number;
   height: number;
+  active?: boolean;
 };
 
 
@@ -71,6 +73,7 @@ const PDFViewer: React.FC<PDFViewerProps> = ({
           y: 50,
           width: 150,
           height: 40,
+          active: true
         },
       ]);
     };
@@ -96,6 +99,22 @@ const PDFViewer: React.FC<PDFViewerProps> = ({
         });
       };
 
+      const handleBoxActive = (id: number) => {
+        setTextBoxes((prev) =>
+          prev.map((box) => (box.id === id ? { ...box, active: true } : { ...box, active: false }))
+        );
+        console.log(textBoxes)
+      }
+
+      const handleBoxInactive = (id: number) => {
+          //if some box is active, deactivate all
+          setTextBoxes((prev) =>
+            prev.map((box) => ( box.id === id ? { ...box, active: false } : box))
+          );
+          console.log("Inactive", textBoxes)
+      }
+
+      
   if (!file) {
     return (
       <div className={`pdf-viewer ${className}`} style={{
@@ -138,7 +157,8 @@ const PDFViewer: React.FC<PDFViewerProps> = ({
         minHeight: '400px',
         backgroundColor: '#f9f9f9',
         overflow: 'auto'
-      }}>
+      }}
+      >
         {loading && (
           <div style={{ 
             color: '#666', 
@@ -170,6 +190,7 @@ const PDFViewer: React.FC<PDFViewerProps> = ({
           </div>
         )}
 
+        
         <Document
           file={file}
           onLoadSuccess={handleLoadSuccess}
@@ -196,7 +217,6 @@ const PDFViewer: React.FC<PDFViewerProps> = ({
               onResizeStop={handleResizeStop(box.id)}
               bounds="parent"
               style={{
-                border: "1px solid #6666ff",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -205,12 +225,26 @@ const PDFViewer: React.FC<PDFViewerProps> = ({
                 position: "absolute",
                 zIndex: 1,
               }}
+              onMouseLeave={() => handleBoxInactive(box.id)}
             >
               <input
                 type="text"
                 value={box.text}
                 onChange={(e) =>
                   updateTextBox(box.id, { text: e.target.value })
+                }
+                onMouseDown={() => handleBoxActive(box.id)}
+                className={`${box.active ? 'rnd-box-active' : 'rnd-box'}`}
+                style={
+                  {
+                    width: '100%',
+                    height: '60%',
+                    // border: 'none',
+                    outline: 'none',
+                    background: 'transparent',
+                    fontSize: '14px',
+                    color: '#333',
+                  }
                 }
               />
             </Rnd>

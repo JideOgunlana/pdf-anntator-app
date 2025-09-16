@@ -1,0 +1,9 @@
+.rnd-box-active {
+    border: 2px solid #6666ff;
+    
+}
+
+.rnd-box {
+  border: 1px solid transparent;
+  transition: border-color 0.25s;
+}
