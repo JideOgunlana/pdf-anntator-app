@@ -103,7 +103,6 @@ const PDFViewer: React.FC<PDFViewerProps> = ({
         setTextBoxes((prev) =>
           prev.map((box) => (box.id === id ? { ...box, active: true } : { ...box, active: false }))
         );
-        console.log(textBoxes)
       }
 
       const handleBoxInactive = (id: number) => {
@@ -111,7 +110,6 @@ const PDFViewer: React.FC<PDFViewerProps> = ({
           setTextBoxes((prev) =>
             prev.map((box) => ( box.id === id ? { ...box, active: false } : box))
           );
-          console.log("Inactive", textBoxes)
       }
 
       
@@ -238,7 +236,7 @@ const PDFViewer: React.FC<PDFViewerProps> = ({
                 style={
                   {
                     width: '100%',
-                    height: '60%',
+                    height: '70%',
                     // border: 'none',
                     outline: 'none',
                     background: 'transparent',
